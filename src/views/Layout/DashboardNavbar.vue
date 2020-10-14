@@ -73,9 +73,8 @@
             <i class="ni ni-user-run"></i>
             <span>Logout</span>
           </b-dropdown-item>
-          <!-- ToDo is here -->
           <b-dropdown-item to="/help">
-            <i class="fas fa-hands-helping"></i>
+            <i class="ni ni-user-run"></i>
             <span>Help</span>
           </b-dropdown-item>
         </template>
