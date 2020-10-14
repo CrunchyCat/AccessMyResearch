@@ -7,10 +7,12 @@
                   :link="{
                     name: 'Upload Article',
                     path: '/upload',
-                    icon: 'fas fa-arrow-up text-pink'
+                    icon: 'ni ni-fat-add text-pink'
                   }">
         </sidebar-item>
+
         <b-dropdown-divider> </b-dropdown-divider>
+
         <sidebar-item
           :link="{
             name: 'Home',
@@ -19,20 +21,30 @@
           }"
         >
         </sidebar-item>
+
         <sidebar-item
             :link="{
               name: 'Ask an Expert',
               path: '/ask',
-              icon: 'fas fa-glasses text-purple'
+              icon: 'ni ni-paper-diploma text-purple'
               }"
             >
         </sidebar-item>
+
         <sidebar-item
               :link="{
                 name: 'My Collections',
                 path: '/collections',
-                icon: 'fas fa-layer-group text-orange'
+                icon: 'ni ni-books text-orange'
                 }">
+        </sidebar-item>
+
+        <sidebar-item
+                  :link="{
+                    name: 'Messages',
+                    path: '/messages',
+                    icon: 'ni ni-chat-round text-green'
+                  }">
         </sidebar-item>
       </template>
     </side-bar>

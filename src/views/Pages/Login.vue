@@ -47,7 +47,7 @@
                               class="mb-3"
                               name="Email"
                               :rules="{required: true, email: true}"
-                              prepend-icon="fas fa-envelope"
+                              prepend-icon="ni ni-email-83"
                               placeholder="Email"
                               v-model="model.email">
                   </base-input>
@@ -56,7 +56,7 @@
                               class="mb-3"
                               name="Password"
                               :rules="{required: true, min: 6}"
-                              prepend-icon="fas fa-lock-open"
+                              prepend-icon="ni ni-lock-circle-open"
                               type="password"
                               placeholder="Password"
                               v-model="model.password">

@@ -104,11 +104,53 @@
 
       <hr class="my-4">
       <!-- Description -->
-      <h6 class="heading-small text-muted mb-4">About me</h6>
+      <h6 class="heading-small text-muted mb-4">Overview</h6>
       <div class="pl-lg-4">
-        <b-form-group label="About Me" label-class="form-control-label" class="mb-0" label-for="about-form-textaria">
-         <!--  <label class="form-control-label">About Me</label> -->
-          <b-form-textarea rows="4" value="This is a bit about me." id="about-form-textaria" placeholder="A few words about you"></b-form-textarea>
+        <b-form-group label-class="form-control-label" class="mb-0" label-for="about-form-textaria">
+          <!--  <label class="form-control-label">About Me</label> -->
+          <b-form-textarea rows="4" value="A few words about you." id="about-form-textaria" placeholder="A few words about you"></b-form-textarea>
+        </b-form-group>
+      </div>
+
+
+      <hr class="my-4">
+      <!-- Description -->
+      <h6 class="heading-small text-muted mb-4">Education</h6>
+      <div class="pl-lg-4">
+        <b-form-group label-class="form-control-label" class="mb-0" label-for="about-form-textaria">
+          <!--  <label class="form-control-label">About Me</label> -->
+          <b-form-textarea rows="4" value="Your past and current education." id="about-form-textaria" placeholder="A few words about you"></b-form-textarea>
+        </b-form-group>
+      </div>
+
+      <hr class="my-4">
+      <!-- Description -->
+      <h6 class="heading-small text-muted mb-4">Statistic</h6>
+      <div class="pl-lg-4">
+        <b-form-group label-class="form-control-label" class="mb-0" label-for="about-form-textaria">
+          <!--  <label class="form-control-label">About Me</label> -->
+          <b-form-textarea rows="4" value="Some helpful statistic." id="about-form-textaria" placeholder="A few words about you"></b-form-textarea>
+        </b-form-group>
+      </div>
+
+      <hr class="my-4">
+      <!-- Description -->
+      <h6 class="heading-small text-muted mb-4">Grant Information</h6>
+      <div class="pl-lg-4">
+        <b-form-group label-class="form-control-label" class="mb-0" label-for="about-form-textaria">
+          <!--  <label class="form-control-label">About Me</label> -->
+          <b-form-textarea rows="4" value="Information about your grants." id="about-form-textaria" placeholder="A few words about you"></b-form-textarea>
+        </b-form-group>
+      </div>
+
+
+      <hr class="my-4">
+      <!-- Description -->
+      <h6 class="heading-small text-muted mb-4">Publication</h6>
+      <div class="pl-lg-4">
+        <b-form-group label-class="form-control-label" class="mb-0" label-for="about-form-textaria">
+          <!--  <label class="form-control-label">About Me</label> -->
+          <b-form-textarea rows="4" value="What you have published so far." id="about-form-textaria" placeholder="A few words about you"></b-form-textarea>
         </b-form-group>
       </div>
 
