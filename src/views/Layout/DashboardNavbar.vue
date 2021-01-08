@@ -4,336 +4,371 @@
     class="navbar-top navbar-expand"
     :class="{ 'navbar-dark': type === 'default' }"
   >
-    <a
-      href="#"
-      aria-current="page"
-      class="h4 mb-0 text-white text-uppercase d-none d-lg-inline-block active router-link-active"
-    >
-      {{ $route.name }}
-    </a>
+    <router-link class="navbar-brand" to="/">
+      <img :src="logo" width="80%" class="navbar-brand-img" alt="AccessMyResearch">
+    </router-link>
     <!-- Navbar links -->
+    <b-form
+      class="navbar-search form-inline w-100"
+      :class="{
+        'navbar-search-dark': type === 'default',
+        'navbar-search-light': type === 'light',
+      }"
+      id="navbar-search-main"
+      @submit.prevent="onSubmit"
+    >
+      <b-form-group class="mb-0">
+        <b-input-group class="input-group-alternative input-group-merge">
+          <div class="input-group-append">
+            <span class="input-group-text">
+              <i class="fas fa-search"/>
+            </span>
+          </div>
+          <b-form-input
+            id="search"
+            v-model="search.text"
+            @input="filterRecentSearches"
+            @focus="modal = false"
+            @click="openAutoComplete"
+            autocomplete="off"
+            type="text"
+            placeholder="Search by keyword"
+          >
+          </b-form-input>
+          <!-- autocomplete start -->
+          <div
+            v-if="filteredRecentSearches && modal"
+            class="AutoCompleteDropDown"
+          >
+            <ul>
+              <b-dropdown-item
+                v-for="filteredRecentSearch in filteredRecentSearches"
+                :key="filteredRecentSearch"
+                @click="setSearch(filteredRecentSearch)"
+              >
+                {{ filteredRecentSearch }}
+              </b-dropdown-item>
+            </ul>
+          </div>
+          <!-- autocomplete start -->
+          <!-- start here  -->
+          <div class="SearchDropDown">
+            <b-dropdown variant="transparent" style="width:0%" right text="">
+              <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button
+                      block
+                      v-b-toggle.SortByAccordion
+                      variant="primary"
+                      >Sort By</b-button
+                    >
+                  </b-card-header>
+                  <b-collapse
+                    id="SortByAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <b-form-select
+                          id="sortByFilter"
+                          @input="sort"
+                          v-model="selectedSortBy"
+                          :options="sortBy"
+                        ></b-form-select>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button block v-b-toggle.areaAccordion variant="primary">Area</b-button>
+                  </b-card-header>
+                  <b-collapse
+                    id="areaAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <b-form-checkbox-group
+                          id="areaFilter"
+                          v-model="selectedFilters"
+                          @input="sort"
+                          :options="areas"
+                          name="area"
+                        ></b-form-checkbox-group>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button
+                      block
+                      v-b-toggle.expertiseAccordion
+                      variant="primary"
+                      >Expertise</b-button
+                    >
+                  </b-card-header>
+                  <b-collapse
+                    id="expertiseAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <b-form-checkbox-group
+                          id="expertiseFilter"
+                          v-model="selectedFilters"
+                          :options="expertise"
+                          name="expertise"
+                        ></b-form-checkbox-group>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button
+                      block
+                      v-b-toggle.accessibilityAccordion
+                      variant="primary"
+                      >Accessibility</b-button
+                    >
+                  </b-card-header>
+                  <b-collapse
+                    id="accessibilityAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <b-form-group>
+                        <b-form-checkbox-group 
+                          style="column-count: 2;"
+                          id="accessibilityFilter"
+                          v-model="selectedFilters"
+                          :options="accessibilityOptions"
+                          name="acccessibility"
+                        ></b-form-checkbox-group>
+                        </b-form-group>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button block v-b-toggle.yearAccordion variant="primary">Year</b-button>
+                  </b-card-header>
+                  <b-collapse
+                    id="yearAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <br/>
+                        <vue-slider
+                          v-model="yearRange"
+                          :min="1950"
+                          :max="2020"
+                          :enable-cross="false"
+                          :tooltip="'always'"
+                        ></vue-slider>
+                        <br/>
+                        <div>Years Selected: {{ yearRange }}</div>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button block v-b-toggle.typeAccordion variant="primary">Type</b-button>
+                  </b-card-header>
+                  <b-collapse
+                    id="typeAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <b-form-checkbox-group
+                          style="column-count: 2;"
+                          id="typeFilter"
+                          v-model="selectedFilters"
+                          :options="types"
+                          name="type"
+                        ></b-form-checkbox-group>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button
+                      block
+                      v-b-toggle.databaseAccordion
+                      variant="primary"
+                      >Database</b-button
+                    >
+                  </b-card-header>
+                  <b-collapse
+                    id="databaseAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <b-form-checkbox-group
+                          style="column-count: 2;"
+                          id="databaseFilter"
+                          v-model="selectedFilters"
+                          :options="databases"
+                          name="database"
+                        ></b-form-checkbox-group>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <div class="accordion" role="tablist">
+
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button
+                      block
+                      v-b-toggle.journalAccordion
+                      variant="primary"
+                      >Journals</b-button
+                    >
+                  </b-card-header>
+                  <b-collapse
+                    id="journalAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body>
+                      <b-dropdown-group class="small">
+                        <b-form-checkbox-group
+                          id="journalFilter"
+                          v-model="selectedFilters"
+                          @input="sort"
+                          :options="journals"
+                          name="journals"
+                        ></b-form-checkbox-group>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+                <div class="accordion" role="tablist">
+                <b-card no-body class="mb-1">
+                  <b-card-header header-tag="header" class="p-1" role="tab">
+                    <b-button
+                      block
+                      v-b-toggle.defaultAccordion
+                      variant="primary"
+                      >Default</b-button
+                    >
+                  </b-card-header>
+                  <b-collapse
+                    id="defaultAccordion"
+                    accordion="my-accordion"
+                    role="tabpanel"
+                  >
+                    <b-card-body v-if="defaultFilterCheckbox">
+                      <b-dropdown-group class="small">
+                        <div>{{ selectedFilters }}</div>
+                      </b-dropdown-group>
+                    </b-card-body>
+                  </b-collapse>
+                </b-card>
+              </div>
+
+              <!--TODO: figure out why click isn't working first 3 times -->
+              <input
+                type="checkbox"
+                v-model="defaultFilterCheckbox"
+                @click="defaultFilterCheckboxChecked()"
+              />
+              Save current filters as default
+              <b-button class="btn float-right" variant="primary">Search</b-button>
+            </b-dropdown>
+          </div>
+        </b-input-group>
+      </b-form-group>
+    </b-form>
     <b-navbar-nav class="align-items-center ml-auto">
-      <b-form
-        class="navbar-search form-inline mr-sm-3"
-        :class="{
-          'navbar-search-dark': type === 'default',
-          'navbar-search-light': type === 'light',
-        }"
-        id="navbar-search-main"
-        @submit="onSubmit"
-      >
-        <b-form-group class="mb-0">
-          <b-input-group class="input-group-alternative input-group-merge">
-            <div class="input-group-append">
-              <span class="input-group-text">
-                <i class="fas fa-search"></i>
-              </span>
-            </div>
-            <b-form-input
-              id="search"
-              v-model="search.text"
-              @input="filterRecentSearches"
-              @focus="modal = false"
-              @click="openAutoComplete"
-              autocomplete="off"
-              type="text"
-              placeholder="Search by Keyword or Author"
-            >
-            </b-form-input>
-            <!-- autocomplete start -->
-            <div
-              v-if="filteredRecentSearches && modal"
-              class="AutoCompleteDropDown"
-            >
-              <ul>
-                <b-dropdown-item
-                  v-for="filteredRecentSearch in filteredRecentSearches"
-                  :key="filteredRecentSearch"
-                  @click="setSearch(filteredRecentSearch)"
-                >
-                  {{ filteredRecentSearch }}
-                </b-dropdown-item>
-              </ul>
-            </div>
-            <!-- autocomplete start -->
-            <!-- start here  -->
-            <div class="SearchDropDown">
-              <b-dropdown variant="" right text="">
-                <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        block
-                        v-b-toggle.SortByAccordion
-                        variant="primary"
-                        >Sort By</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="SortByAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <b-form-select
-                            id="sortByFilter"
-                            @input="sort"
-                            v-model="selectedSortBy"
-                            :options="sortBy"
-                          ></b-form-select>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
+      <a
+          slot="title-container"
+          class="nav-link nav-link-icon nav-item"
+          href="#"
+          role="button"
+          @click="toUpload"
+          aria-expanded="false"
+          v-if="signedIn"
+        >
+          <i class="fas fa-plus TopIcon"/>
+      </a>
 
-                <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button block v-b-toggle.areaAccordion variant="primary"
-                        >Area</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="areaAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <b-form-checkbox-group
-                            id="areaFilter"
-                            v-model="selectedFilters"
-                            @input="sort"
-                            :options="areas"
-                            name="area"
-                          ></b-form-checkbox-group>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
+      <a
+          slot="title-container"
+          class="nav-link nav-link-icon nav-item"
+          href="#"
+          role="button"
+          @click="toDonate"
+          aria-expanded="false"
+          v-if="signedIn"
+        >
+          <i class="fas fa-donate TopIcon"/>
+      </a>
 
-                <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        block
-                        v-b-toggle.expertiseAccordion
-                        variant="primary"
-                        >Expertise</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="expertiseAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <b-form-checkbox-group
-                            id="expertiseFilter"
-                            v-model="selectedFilters"
-                            :options="expertise"
-                            name="expertise"
-                          ></b-form-checkbox-group>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
+      <a
+          slot="title-container"
+          class="nav-link nav-link-icon nav-item"
+          href="#"
+          role="button"
+          @click="toCollections"
+          aria-expanded="false"
+          v-if="signedIn"
+        >
+          <i class="fas fa-layer-group TopIcon"/>
+      </a>
 
-                <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        block
-                        v-b-toggle.accessibilityAccordion
-                        variant="primary"
-                        >Accessibility</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="accessibilityAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <b-form-group>
-                          <b-form-checkbox-group 
-                            style="column-count: 2;"
-                            id="accessibilityFilter"
-                            v-model="selectedFilters"
-                            :options="accessibilityOptions"
-                            name="acccessibility"
-                          ></b-form-checkbox-group>
-                          </b-form-group>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
+      <a
+          slot="title-container"
+          class="nav-link nav-link-icon nav-item"
+          href="#"
+          role="button"
+          @click="toNetwork"
+          aria-expanded="false"
+          v-if="signedIn"
+        >
+          <i class="fas fa-user-friends TopIcon"/>
+      </a>
 
-                <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button block v-b-toggle.yearAccordion variant="primary"
-                        >Year</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="yearAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <br />
-                          <vue-slider
-                            v-model="yearRange"
-                            :min="1950"
-                            :max="2020"
-                            :enable-cross="false"
-                            :tooltip="'always'"
-                          ></vue-slider>
-                          <br />
-                          <div>Years Selected: {{ yearRange }}</div>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
-
-                <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button block v-b-toggle.typeAccordion variant="primary"
-                        >Type</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="typeAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <b-form-checkbox-group
-                            style="column-count: 2;"
-                            id="typeFilter"
-                            v-model="selectedFilters"
-                            :options="types"
-                            name="type"
-                          ></b-form-checkbox-group>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
-
-                <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        block
-                        v-b-toggle.databaseAccordion
-                        variant="primary"
-                        >Database</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="databaseAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <b-form-checkbox-group
-                            style="column-count: 2;"
-                            id="databaseFilter"
-                            v-model="selectedFilters"
-                            :options="databases"
-                            name="database"
-                          ></b-form-checkbox-group>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
-
-                <div class="accordion" role="tablist">
-
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        block
-                        v-b-toggle.journalAccordion
-                        variant="primary"
-                        >Journals</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="journalAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body>
-                        <b-dropdown-group class="small">
-                          <b-form-checkbox-group
-                            id="journalFilter"
-                            v-model="selectedFilters"
-                            @input="sort"
-                            :options="journals"
-                            name="journals"
-                          ></b-form-checkbox-group>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
-
-                 <div class="accordion" role="tablist">
-                  <b-card no-body class="mb-1">
-                    <b-card-header header-tag="header" class="p-1" role="tab">
-                      <b-button
-                        block
-                        v-b-toggle.defaultAccordion
-                        variant="primary"
-                        >Default</b-button
-                      >
-                    </b-card-header>
-                    <b-collapse
-                      id="defaultAccordion"
-                      accordion="my-accordion"
-                      role="tabpanel"
-                    >
-                      <b-card-body v-if="defaultFilterCheckbox">
-                        <b-dropdown-group class="small">
-                          <div>{{ selectedFilters }}</div>
-                        </b-dropdown-group>
-                      </b-card-body>
-                    </b-collapse>
-                  </b-card>
-                </div>
-
-                <!-- Need to figure out why click isn't working first 3 times -->
-                <input
-                  type="checkbox"
-                  v-model="defaultFilterCheckbox"
-                  @click="defaultFilterCheckboxChecked()"
-                />
-                Save current filters as default
-                <b-button class="btn float-right" variant="primary"
-                  >Search</b-button
-                >
-              </b-dropdown>
-            </div>
-          </b-input-group>
-        </b-form-group>
-      </b-form>
-      <!-- start message and notification -->
       <base-dropdown class="nav-item" menu-on-right tag="li" title-tag="a">
         <a
           slot="title-container"
@@ -344,38 +379,35 @@
           aria-expanded="false"
           @click="toggleNotificationDropDown"
         >
-          <i class="fas fa-bell"></i>
+          <i class="fas fa-bell TopIcon"/>
         </a>
-        <a class="dropdown-item" to="/notifications" v-if="signedIn">
-          <!-- TODO: Link to Notification-->
-          <!-- TODO: Link to Notification-->
-          <i class="fas fa-book-open"></i>
-          New Article by: Mehmet Günal
-          <small class="form-text text-muted">Yesterday</small>
-        </a>
-        <a class="dropdown-item" to="/notifications" v-if="signedIn">
-          <i class="fas fa-user-friends"></i>
-          New friend: Mehmet Günal
-          <small class="form-text text-muted">1 week ago</small>
-        </a>
+        <div v-for="user in users" :key="user.id">
+          <a class="dropdown-item" @click="reroute(user)" v-if="signedIn">
+            <i class="fas fa-user-friends"></i>
+            {{ user.id }} {{ user.message }}
+            <small class="form-text text-muted">{{ user.created }}</small>
+          </a>
+        </div>
         <span v-for="(key, val) in this.reminders" v-bind:key="val">
           <a class="dropdown-item" to="/notifications">
-            <i class="fas fa-search"></i>
+            <i class="fas fa-search"/>
             Search for: {{ val }}
             <small class="form-text text-muted">{{ key }}</small>
           </a>
         </span>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" to="/notifications" v-if="signedIn">
-          <i class="fas fa-clock"></i>
-          All Notifications
-        </a>
+        <div class="dropdown-divider"/>
+        <router-link to="/notifications" class="dropdown-item">
+          <i class="fas fa-clock"/>
+          <span>All Requests </span>
+        </router-link>
+        <router-link to="/notifications" class="dropdown-item">
+          <i class="fas fa-clock"/>
+          <span>All Notifications </span>
+        </router-link>
         <b-alert show variant="light" class="text-dark" v-if="!signedIn">
-          <i class="fas fa-exclamation-circle fa-lg"></i>
+          <i class="fas fa-exclamation-circle fa-lg"/>
           In order to access this feature, you must login. You can login
-          <router-link class="font-weight-bolder text-dark" to="/login"
-            >here.</router-link
-          >
+          <router-link class="font-weight-bolder text-dark" to="/login">here.</router-link>
         </b-alert>
       </base-dropdown>
 
@@ -389,54 +421,31 @@
           aria-expanded="false"
           @click="redirect"
         >
-          <i class="fas fa-comment"></i>
+          <i class="fas fa-comment TopIcon"/>
         </a>
         <a class="dropdown-item" to="/messages" v-if="signedIn">
           <!-- TODO: Link to Messages-->
-          <!-- TODO: Link to Messages-->
-          <i class="fas fa-comment"></i>
+          <i class="fas fa-comment"/>
           Mehmet Günal: Check out my research!
           <small class="form-text text-muted">Yesterday</small>
         </a>
         <a class="dropdown-item" to="/messages" v-if="signedIn">
-          <i class="far fa-comment"></i>
+          <i class="far fa-comment"/>
           Greg Kitchen: Check out his research!
           <small class="form-text text-muted">1 week ago</small>
         </a>
-        <div class="dropdown-divider"></div>
+        <div class="dropdown-divider"/>
         <router-link to="/notifications" class="dropdown-item">
-          <span>All Requests </span>
+          <i class="fas fa-clock"/>
+          <span>All Messages </span>
         </router-link>
-
-        <!-- </template> -->
-      </base-dropdown>
-
-      <base-dropdown class="nav-item" menu-on-right tag="li" title-tag="a">
-        <a
-          slot="title-container"
-          class="nav-link nav-link-icon"
-          href="#"
-          role="button"
-          aria-haspopup="true"
-          aria-expanded="false"
-          @click="redirect"
-        >
-          <i class="fas fa-envelope"></i>
-        </a>
-        <div class="dropdown-divider"></div>
-        <a class="dropdown-item" to="/messages" v-if="signedIn">
-          <!-- TODO: Link to Messages-->
-          <i class="fas fa-clock"></i>
-          All Messages
-        </a>
         <b-alert show variant="light" class="text-dark" v-if="!signedIn">
-          <i class="fas fa-exclamation-circle fa-lg"></i>
+          <i class="fas fa-exclamation-circle fa-lg"/>
           In order to access this feature, you must login. You can login
-          <router-link class="font-weight-bolder text-black" to="/login"
-            >here.</router-link
-          >
+          <router-link class="font-weight-bolder text-black" to="/login">here.</router-link>
         </b-alert>
       </base-dropdown>
+
       <base-dropdown
         menu-on-right
         class="nav-item"
@@ -447,7 +456,7 @@
         <a href="#" class="nav-link pr-0" @click.prevent slot="title-container">
           <b-media no-body class="align-items-center">
             <span class="avatar avatar-sm rounded-circle">
-              <img alt="Image placeholder" src="img/theme/team-4.jpg" />
+              <img alt="Image placeholder" src="/img/theme/team-4.jpg" />
               <!--TODO: Show profile pic-->
             </span>
           </b-media>
@@ -456,37 +465,27 @@
 
         <template>
           <b-dropdown-header class="noti-title" v-if="signedIn">
-            <h6 class="text-overflow m-0">Welcome!</h6>
+            <h6 class="text-overflow m-0">Hi, Mehmet!</h6>
           </b-dropdown-header>
           <b-dropdown-item to="/profile" v-if="signedIn">
-            <i class="fas fa-user"></i>
+            <i class="fas fa-user"/>
             <span>My profile</span>
           </b-dropdown-item>
-          <b-dropdown-item to="/activity" v-if="signedIn">
-            <i class="far fa-calendar-alt"></i>
-            <span>Activity</span>
-          </b-dropdown-item>
-          <div class="dropdown-divider" v-if="signedIn"></div>
           <b-dropdown-item to="/search-history">
-            <i class="fas fa-user"></i>
+            <i class="fas fa-history"/>
             <span>Search History</span>
           </b-dropdown-item>
-          <div class="dropdown-divider" v-if="signedIn"></div>
-
+          <div class="dropdown-divider" v-if="signedIn"/>
           <b-dropdown-item to="/settings" v-if="signedIn">
-            <i class="fas fa-cog"></i>
+            <i class="fas fa-cog"/>
             <span>Settings</span>
           </b-dropdown-item>
-          <b-dropdown-item to="/donate">
-            <i class="fas fa-donate"></i>
-            <span>Donate</span>
-          </b-dropdown-item>
           <b-dropdown-item to="/login" v-if="!signedIn">
-            <i class="fas fa-sign-in-alt"></i>
+            <i class="fas fa-sign-in-alt"/>
             <span>Login</span>
           </b-dropdown-item>
           <b-dropdown-item @click="signOut" v-if="signedIn">
-            <i class="fas fa-sign-out-alt"></i>
+            <i class="fas fa-sign-out-alt"/>
             <span>Logout</span>
           </b-dropdown-item>
         </template>
@@ -501,20 +500,28 @@ import VueSlider from "vue-slider-component";
 import "vue-slider-component/theme/default.css";
 import { Auth } from "aws-amplify";
 import axios from "axios";
+import { API, graphqlOperation } from 'aws-amplify';
+import * as queries from '../../graphql/queries.js';
+import { listFollows, listRequestss } from '../../graphql/queries.js';
 
 export default {
   components: {
     //CollapseTransition,
     BaseNav,
     //Modal,
-    VueSlider,
+    VueSlider
   },
   props: {
+    logo: {
+      type: String,
+      default: '/img/brand/orange.png',
+      description: 'AccessMyResearch Logo'
+    },
     type: {
       type: String,
       default: "default", // default|light
       description:
-        "Look of the dashboard navbar. Default (Green) or light (gray)",
+        "Look of the dashboard navbar",
     },
   },
   computed: {
@@ -522,6 +529,9 @@ export default {
       const { name } = this.$route;
       return this.capitalizeFirstLetter(name);
     },
+    signedIn(){
+      return this.$store.state.signedIn;
+    }
   },
   mounted() {
     if (localStorage.selectedFilters) {
@@ -541,22 +551,22 @@ export default {
     this.getSearchHistory();
     this.getReminders();
   },
-  created() {
-    if (this.$store.state.signedIn === true) {
-      this.signedIn = true;
-    }
+  created()
+  {
+    this.listUsers();
   },
   data() {
     return {
       activeNotifications: false,
+      users: [],
       showMenu: false,
       searchModalVisible: false,
       searchQuery: "",
-      signedIn: false,
       timeTotal: 0,
       reminders: [],
       //autocomplete start
       modal: false,
+      follows: [],
       recentSearches: [],
       filteredRecentSearches: [],
       defaultFilterCheckbox: false,
@@ -759,7 +769,7 @@ export default {
       }
       this.$router
         .push({
-          path: "results",
+          name: "results",
           query: { text: this.search.text, filter: this.search.filter },
         })
         .catch(() => {});
@@ -778,16 +788,62 @@ export default {
       this.activeNotifications = false;
     },
     signOut() {
+      /*If the user is signed in, the Auth.signOut 
+      function will sign the user out of the account and redirect to the login page. 
+      */
       Auth.signOut()
         .then((data) => {
           this.$store.state.signedIn = !!data;
-          this.$router.push("login");
+          this.$router.push("/login");
         })
         .catch((err) => console.log(err));
     },
     redirect() {
-      if (this.$store.state.signedIn === false) {
-        this.$router.push("login");
+      if (!this.$store.state.signedIn) {
+        this.$router.push("/login");
+      }
+    },
+    async listUsers() 
+    {
+      const listRequests = await API.graphql(graphqlOperation(listRequestss)); //returns a JSON of all the rows in the Requests table of DynamoDB
+
+      for(const [key, value] of Object.entries(listRequests.data.listRequestss.items)) //for all items in the rows
+      {
+        if(value.user != null && value.friend != null && value.user.id == this.$store.state.user.username) //if the user id equals the current user
+        {
+          //push the request row to the store (to show in notifications)
+          this.$store.state.requests.push(
+            {
+              id: value.friend.id,
+              created: value.createdAt,
+              message: "wants to add you as a connection"
+            });
+        }
+      }
+
+      this.users = this.$store.state.requests; //setting the current users array to the store's requests array
+
+      const followList = await API.graphql(graphqlOperation(listFollows)); //returns a JSON of all the rows in the Follows table of DynamoDB
+
+      for(const [key, value] of Object.entries(followList.data.listFollows.items)) //for all items in the rows
+      {
+        if(value.user != null && value.friend != null && value.friend.id == this.$store.state.user.username) //if the user id equals the current user
+        {
+          //push the follow row to the store (to show in notifications)
+          this.$store.state.follows.push(
+            {
+              id: value.user.id,
+              created: value.createdAt,
+              message: "followed you!"
+            });
+
+          //push the current row to the user array (to show in notifications)
+          this.users.push({
+              id: value.user.id,
+              created: value.createdAt,
+              message: "followed you!"
+            })
+        }
       }
     },
     sort() {
@@ -855,15 +911,45 @@ export default {
     getReminders() {
       this.reminders = JSON.parse(localStorage.reminders);
     },
+    toUpload() {
+      this.$router.push('upload');
+    },
+    toDonate() {
+      this.$router.push('donate');
+    },
+    toCollections() {
+      this.$router.push('collections');
+    },
+    toNetwork() {
+      this.$router.push('network-list');
+    },
+    reroute(user) {
+      //on click of follow notification, redirects to follows page
+      if(user.message == "followed you!")
+      {
+        this.$router.push('follows');
+      }
+      else
+      {
+        //on click of wants to add you as a connection notification, redirects to requests page
+          this.$router.push('requests');
+      }
+    }
   },
 };
 </script>
-<style>
+<style scoped>
 .AutoCompleteDropDown {
   position: absolute;
   background: white;
   border-radius: 4px;
   top: 45px;
   width: 350px;
+}
+.TopIcon {
+  color: white;
+} /*TODO: Get variables from assets/custom/_variables.scss instead*/
+.TopIcon:hover {
+  color: #F78626;
 }
 </style>

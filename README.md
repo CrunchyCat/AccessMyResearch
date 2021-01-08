@@ -1,4 +1,4 @@
-# Access My Research
+# AccessMyResearch
 AccessMyResearch is a BootstrapVue + Vue.js web application designed to connect users with researchers, increase access to publications, & act as a space for teams to work on research-related projects.
 
 # Project Goals
@@ -44,4 +44,5 @@ Contributing | Codebase
    > Still need a new component? Check out [BootstrapVue Components](https://bootstrap-vue.org/docs/components) or [Element Components](https://element.eleme.io/#/en-US/component/layout).
 1. Avoid adding redundant dependencies. See [what each dependency does](https://github.com/AccessMyResearch/AccessMyResearch/wiki/Core-Technologies-&-Dependencies#web-app-dependencies) before you add a new one.
 1. If you encounter an issue, [check to see if there is a solution](https://github.com/AccessMyResearch/AccessMyResearch/wiki/Solving-Common-Issues#solutions-to-common-issues)
+
    > Be sure to [document the solution to your problem](https://github.com/AccessMyResearch/AccessMyResearch/wiki/Solving-Common-Issues#solutions-to-common-issues) if you think others might encounter it too.

@@ -46,7 +46,7 @@
                             </div>
                             <div>
                                 <button id="payment-button" type="submit" class="btn btn-lg btn-info btn-block">
-                                    <i class="fa fa-lock fa-lg"></i>&nbsp;
+                                    <i class="fa fa-lock fa-lg"/>&nbsp;
                                     <span id="payment-button-amount">save </span>
                                     <span id="payment-button-sending" style="display:none;">Sending…</span>
                                 </button>
@@ -59,7 +59,3 @@
     </div>
 </div>
 </template>
-<script>
-export default {
-}
-</script>

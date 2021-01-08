@@ -5,11 +5,12 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: null,
     signedIn: false,
+    isAdmin: false,
+    isExpert: false,
     username: "",
     user: {
-      company: 'Access My Research',
+      company: 'AccessMyResearch',
       username: '',
       email: '',
       firstName: '',
@@ -20,8 +21,10 @@ export default new Vuex.Store({
       state: '',
       aboutMe: '',
       expertise: '',
-      university: ''
+      university: '',
     },
+    requests: [],
+    follows: []
   },
   mutations: {
 

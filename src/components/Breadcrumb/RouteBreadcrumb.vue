@@ -2,7 +2,7 @@
   <bread-crumb list-classes="breadcrumb-links breadcrumb-dark">
     <BreadCrumbItem>
         <router-link to="/">
-          <i class="fas fa-home"></i>
+          <i class="fas fa-home"/>
         </router-link>
     </BreadCrumbItem>
     <BreadCrumbItem
@@ -21,7 +21,6 @@
     </BreadCrumbItem>
   </bread-crumb>
 </template>
-
 <script>
   import BreadCrumb from './Breadcrumb';
   import BreadCrumbItem from './BreadcrumbItem';
@@ -39,5 +38,3 @@
     }
   };
 </script>
-
-<style scoped></style>

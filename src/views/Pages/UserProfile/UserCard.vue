@@ -41,13 +41,13 @@
         <h5 class="h3">{{user.firstName + " " + user.lastName}}<span class="font-weight-light">, {{user.education}}</span>
         </h5>
         <div class="h5 font-weight-300">
-          <i class="fas fa-map-marker-alt mr-2"></i>{{user.city + ", " + user.state + ", " + user.country}}
+          <i class="fas fa-map-marker-alt mr-2"/>{{user.city + ", " + user.state + ", " + user.country}}
         </div>
         <div class="h5 mt-4">
-          <i class="fas fa-briefcase mr-2"></i>{{user.expertise}}
+          <i class="fas fa-briefcase mr-2"/>{{user.expertise}}
         </div>
         <div>
-          <i class="fas fa-user-graduate mr-2"></i>{{user.university}}
+          <i class="fas fa-user-graduate mr-2"/>{{user.university}}
         </div>
         <hr class="my-4">
         <p>{{user.aboutMe}}</p>
@@ -59,8 +59,6 @@
 </template>
 <script>
 import UserActionDropdown from "./UserActionsDropdown.vue";
-import { CognitoUserPool } from 'amazon-cognito-identity-js';
-import CognitoAuth from 'amazon-cognito-auth-js';
 import { Auth } from 'aws-amplify';
 
 export default {
@@ -73,7 +71,7 @@ export default {
       data: '',
       dataloaded: false,
       user: {
-        company: 'Access My Research',
+        company: 'AccessMyResearch',
         username: '',
         email: '',
         firstName: '',
@@ -90,7 +88,6 @@ export default {
   },
   async created() {
     await this.getUserData();
-    console.log("User Card created");
     if(this.$store.state.signedIn)
     {
       this.signedIn = true;
@@ -100,13 +97,13 @@ export default {
   },
   methods: {
     getUserData() {
-      console.log("User Data");
       
+      //gets the profile information stored in Cognito
       Auth.currentAuthenticatedUser().then((value) => {
         var values = value.storage;
 
         for (const [key, value] of Object.entries(values)) {
-          if(value[0] == "{")
+          if(value.substring(0, 15) == "{\"UserAttribute") //the user attribute field contains all the user attributes of the current signed in user
           {
             this.data = value;
             break ;
@@ -115,7 +112,7 @@ export default {
 
         var obj = JSON.parse(this.data);
 
-        for(const [key, value] of Object.entries(obj.UserAttributes))
+        for(const [key, value] of Object.entries(obj.UserAttributes)) //push the user information in Cognito to the store's user array and the page's user array (to access it locally, store array cannot be accessed from the HTML)
         {
           if(value.Name == "custom:articles")
           { 
@@ -187,7 +184,7 @@ export default {
           { 
             this.$store.state.user.aboutMe = value.Value;
             this.user.aboutMe = value.Value;
-            this.dataloaded = true;
+            this.dataloaded = true; //sets the data loaded property to true which renders the page (ensures all the data is loaded before rendering user card fully)
           }
         }
       });

@@ -1,6 +1,6 @@
 <template>
 <div>
-    <base-header class="pb-6 pb-8 pt-5 pt-md-8 bg-gradient-primary">
+    <base-header class="pb-8 pt-md-8 bg-gradient-primary">
         <h1 class="display-3 text-white text-center">Choose some fields you are interested in</h1>
     </base-header>
     <div class="category-container">
@@ -90,7 +90,9 @@ export default {
             this.model.selectedCategoryIndex = index;
         },
         dbStuff: function(event){
-            alert("dbStuff");
+            //TODO - there is no where current to persist a user's interests. Should this functionality wish to be completed,
+            // we still need to implement a way to store any decisions a user makes regarding their interests.
+            alert("dbStuff"); 
         }
     },
     components: {

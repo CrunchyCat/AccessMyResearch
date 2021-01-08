@@ -16,10 +16,29 @@ import store from './store';
 import PulseLoader from 'vue-spinner/src/PulseLoader.vue';
 import infiniteScroll from 'vue-infinite-scroll';
 import Amplify, * as AmplifyModules from 'aws-amplify';
+import { Auth } from 'aws-amplify';
 import { AmplifyPlugin } from 'aws-amplify-vue';
+import AWSAppSyncClient, { AUTH_TYPE } from 'aws-appsync';
 import aws_exports from './aws-exports';
+import VueAnalytics from 'vue-analytics'
 
-Amplify.configure(aws_exports);
+Amplify.configure({
+  ...aws_exports,
+  Analytics: { 
+      disabled: true
+  }
+});
+
+console.log(Auth.currentSession());
+
+const client = new AWSAppSyncClient({
+  url: aws_exports.aws_appsync_graphqlEndpoint,
+  region: aws_exports.aws_appsync_region,
+  auth: {
+    type: AUTH_TYPE.AMAZON_COGNITO_USER_POOLS,
+    jwtToken: async () => (await Auth.currentSession()).getIdToken().getJwtToken(),
+  },
+});
 
 Vue.use(AmplifyPlugin, AmplifyModules);
 Vue.component('pulse-loader', require('vue-spinner/src/PulseLoader.vue').default);
@@ -27,6 +46,13 @@ Vue.use(infiniteScroll);
 
 // router setup
 import router from './routes/router';
+
+// analytics setup
+Vue.use(VueAnalytics, {
+  id: 'UA-183671144-1', //google analytics tracking id
+  router
+});
+
 // plugin setup
 Vue.use(DashboardPlugin);
 
@@ -59,7 +85,7 @@ Vue.component('VueSlider', VueSlider)
 // end of code added
 
 Vue.prototype.$endpoints = {
-  aspnet: 'https://localhost:5001/',
+  aspnet: 'http://localhost:5000/',
   crossref: 'https://api.crossref.org/',
 };
 
